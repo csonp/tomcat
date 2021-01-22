@@ -29,9 +29,14 @@ import javax.servlet.FilterRegistration;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.util.ParameterMap;
+import org.apache.juli.logging.Log;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.res.StringManager;
+
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 
 public class ApplicationFilterRegistration
         implements FilterRegistration.Dynamic {
@@ -44,6 +49,11 @@ public class ApplicationFilterRegistration
 
     private final FilterDef filterDef;
     private final Context context;
+
+    /**
+     * Our logger
+     */
+    private final Log log = LogFactory.getLog(ApplicationFilterRegistration.class);
 
     public ApplicationFilterRegistration(FilterDef filterDef,
             Context context) {
@@ -90,6 +100,8 @@ public class ApplicationFilterRegistration
 
         filterMap.setFilterName(filterDef.getFilterName());
 
+        log.info("Adding filter: " + filterMap.getFilterName());
+
         if (dispatcherTypes != null) {
             for (DispatcherType dispatcherType : dispatcherTypes) {
                 filterMap.setDispatcher(dispatcherType.name());
@@ -100,6 +112,7 @@ public class ApplicationFilterRegistration
             // % decoded (if necessary) using UTF-8
             for (String urlPattern : urlPatterns) {
                 filterMap.addURLPattern(urlPattern);
+                log.info("Added URL-pattern: " + urlPattern);
             }
 
             if (isMatchAfter) {
@@ -107,6 +120,8 @@ public class ApplicationFilterRegistration
             } else {
                 context.addFilterMapBefore(filterMap);
             }
+        } else {
+            log.info("No URL-pattern was added. Strange... ");
         }
         // else error?
 

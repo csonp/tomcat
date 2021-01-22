@@ -32,8 +32,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Globals;
 import org.apache.catalina.security.SecurityUtil;
+import org.apache.juli.logging.Log;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.res.StringManager;
+
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 
 /**
  * Implementation of <code>javax.servlet.FilterChain</code> used to manage
@@ -97,6 +102,8 @@ public final class ApplicationFilterChain implements FilterChain {
      * Does the associated servlet instance support async processing?
      */
     private boolean servletSupportsAsync = false;
+
+    private final Log log = LogFactory.getLog(ApplicationFilterChain.class);
 
     /**
      * The string manager for our package.
@@ -171,11 +178,14 @@ public final class ApplicationFilterChain implements FilterChain {
                                   ServletResponse response)
         throws IOException, ServletException {
 
-        // Call the next filter if there is one
+        log.info("Filtering " + request.getServletContext().getContextPath());
+
+            // Call the next filter if there is one
         if (pos < n) {
             ApplicationFilterConfig filterConfig = filters[pos++];
             try {
                 Filter filter = filterConfig.getFilter();
+                log.info("Using filter " + filter.toString());
 
                 if (request.isAsyncSupported() && "false".equalsIgnoreCase(
                         filterConfig.getFilterDef().getAsyncSupported())) {

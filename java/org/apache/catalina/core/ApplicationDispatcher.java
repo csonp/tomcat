@@ -700,9 +700,13 @@ final class ApplicationDispatcher implements AsyncDispatcher, RequestDispatcher 
             servlet = null;
         }
 
+        wrapper.getLogger().info("dispatching request: " + request);
+
         // Get the FilterChain Here
         ApplicationFilterChain filterChain =
                 ApplicationFilterFactory.createFilterChain(request, wrapper, servlet);
+
+        wrapper.getLogger().info("attached filterchain: " + filterChain);
 
         // Call the service() method for the allocated servlet instance
         try {

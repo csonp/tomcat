@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -137,6 +138,7 @@ public final class RemoteCIDRFilter extends FilterBase {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
 
+        log.error("doFilter is called");
         if (isAllowed(request.getRemoteAddr())) {
             chain.doFilter(request, response);
             return;
@@ -176,23 +178,29 @@ public final class RemoteCIDRFilter extends FilterBase {
         }
 
         for (final NetMask nm : deny) {
+            log.info("Checking 'deny' prefix: " + nm.toString());
             if (nm.matches(addr)) {
+                log.error("Remote IP " + property + " is denied by " + nm.toString());
                 return false;
             }
         }
 
         for (final NetMask nm : allow) {
+            log.info("Checking 'allow' prefix: " + nm.toString());
             if (nm.matches(addr)) {
+                log.error("Remote IP " + property + " is allowed by " + nm.toString());
                 return true;
             }
         }
 
         // Allow if deny is specified but allow isn't
         if (!deny.isEmpty() && allow.isEmpty()) {
+            log.error("Remote IP " + property + " is allowed due to deny is specified but allow isn't");
             return true;
         }
 
         // Deny this request
+        log.error("Remote IP " + property + " is denied as default");
         return false;
     }
 
@@ -232,5 +240,11 @@ public final class RemoteCIDRFilter extends FilterBase {
         }
 
         return Collections.unmodifiableList(messages);
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        super.init(filterConfig);
+        log.error("init was called");
     }
 }

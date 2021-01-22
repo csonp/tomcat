@@ -2979,6 +2979,7 @@ public class StandardContext extends ContainerBase
         validateFilterMap(filterMap);
         // Add this filter mapping to our registered set
         filterMaps.add(filterMap);
+        log.info("Added filterMap " + filterMap.toString() + " to Context " + this.toString());
         fireContainerEvent("addFilterMap", filterMap);
     }
 

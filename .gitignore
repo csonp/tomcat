@@ -17,6 +17,10 @@
 logs
 nbproject
 output
+modules/cxf/
+modules/owb/
+modules/jdbc-pool/target
+
 # Next line commented out, because test/webapp-virtual-library and
 # test/webapp-virtual-webapp use it:
 # target
